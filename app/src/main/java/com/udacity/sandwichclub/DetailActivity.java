@@ -4,16 +4,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
 import com.udacity.sandwichclub.utils.JsonUtils;
 
+import org.json.JSONException;
+
+import java.util.List;
+
 public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
+
+    private TextView mAlsoKnownAsDisplay;
+    private TextView mPlaceOfOriginDisplay;
+    private TextView mDescriptionDisplay;
+    private TextView mIngredientsDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +46,24 @@ public class DetailActivity extends AppCompatActivity {
 
         String[] sandwiches = getResources().getStringArray(R.array.sandwich_details);
         String json = sandwiches[position];
-        Sandwich sandwich = JsonUtils.parseSandwichJson(json);
+        Sandwich sandwich = null;
+        try {
+            sandwich = JsonUtils.parseSandwichJson(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         if (sandwich == null) {
             // Sandwich data unavailable
             closeOnError();
             return;
         }
 
-        populateUI();
+        mAlsoKnownAsDisplay = findViewById(R.id.also_known_tv);
+        mPlaceOfOriginDisplay = findViewById(R.id.origin_tv);
+        mDescriptionDisplay = findViewById(R.id.description_tv);
+        mIngredientsDisplay = findViewById(R.id.ingredients_tv);
+
+        populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .into(ingredientsIv);
@@ -56,7 +76,12 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
-
+    private void populateUI(Sandwich sandwich) {
+        List<String> akas = sandwich.getAlsoKnownAs();
+        for (int i=0;i<akas.size();i++) mAlsoKnownAsDisplay.append(akas.get(i) + "\n");
+        mPlaceOfOriginDisplay.setText(sandwich.getPlaceOfOrigin() + "\n");
+        mDescriptionDisplay.setText(sandwich.getDescription() + "\n");
+        List<String> ingreds = sandwich.getIngredients();
+        for (int j=0;j<ingreds.size();j++) mIngredientsDisplay.append(ingreds.get(j) + "\n");
     }
 }
