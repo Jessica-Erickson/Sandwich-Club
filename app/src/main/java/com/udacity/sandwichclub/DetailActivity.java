@@ -79,8 +79,8 @@ public class DetailActivity extends AppCompatActivity {
     private void populateUI(Sandwich sandwich) {
         List<String> akas = sandwich.getAlsoKnownAs();
         for (int i=0;i<akas.size();i++) mAlsoKnownAsDisplay.append(akas.get(i) + "\n");
-        mPlaceOfOriginDisplay.setText(sandwich.getPlaceOfOrigin());
-        mDescriptionDisplay.setText(sandwich.getDescription());
+        mPlaceOfOriginDisplay.setText(sandwich.getPlaceOfOrigin() + "\n");
+        mDescriptionDisplay.setText(sandwich.getDescription() + "\n");
         List<String> ingreds = sandwich.getIngredients();
         for (int j=0;j<ingreds.size();j++) mIngredientsDisplay.append(ingreds.get(j) + "\n");
     }
